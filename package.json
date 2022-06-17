@@ -2,7 +2,7 @@
   "name": "crud-api-nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
     "start:prod": "npm run build && npm run prod",
@@ -24,6 +24,10 @@
     "dotenv": "^16.0.1",
     "nodemon": "^2.0.16",
     "ts-node": "^10.8.1",
-    "typescript": "^4.7.3"
+    "typescript": "^4.7.3",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.4"
   }
 }
