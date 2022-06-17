@@ -7,13 +7,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { findUserById } from './findUsers.js';
+import users from '../db/users.js';
+import { getRequestData } from '../utils/getRequestData.js';
 export function updateUser(req, res, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const user = findUserById(id);
+        const newUser = yield getRequestData(req);
+        users.splice(users.findIndex((user) => user.id === id), 1, newUser);
         try {
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(user));
+            res.end(JSON.stringify(newUser));
         }
         catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });

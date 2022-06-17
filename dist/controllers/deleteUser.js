@@ -7,17 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import * as uuid from 'uuid';
 import users from '../db/users.js';
-import { getRequestData } from '../utils/getRequestData.js';
-export function createUser(req, res) {
+export function deleteUser(req, res, id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const user = yield getRequestData(req);
-            const newUser = Object.assign({ id: uuid.v4() }, user);
-            users.push(newUser);
-            res.writeHead(201, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(newUser));
+            users.splice(users.findIndex((user) => user.id === id), 1);
+            res.writeHead(202, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: `User ${id} deleted successfully!` }));
         }
         catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });
