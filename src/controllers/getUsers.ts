@@ -1,10 +1,8 @@
 import http from 'http';
 import { findAllUsers, findUserById } from './findUsers.js';
+import * as uuid from 'uuid';
 
-export async function getAllUsers(
-  req: http.IncomingMessage,
-  res: http.ServerResponse
-) {
+export async function getAllUsers(res: http.ServerResponse): Promise<void> {
   try {
     const users = await findAllUsers();
 
@@ -21,29 +19,28 @@ export async function getAllUsers(
   }
 }
 export async function getUserById(
-  req: http.IncomingMessage,
   res: http.ServerResponse,
   id: string
-) {
-  try {
+): Promise<void> {
+  if (uuid.validate(id)) {
     const user = await findUserById(id);
 
     if (!user) {
       res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'User not found' }));
+      res.end(JSON.stringify({ message: "User doesn't exist" }));
     } else {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(user));
     }
-  } catch (err) {
-    res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Server not found' }));
+  } else {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'UserId is invalid' }));
   }
 }
 export async function getNotFound(
   req: http.IncomingMessage,
   res: http.ServerResponse
-) {
+): Promise<void> {
   res.writeHead(404, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ message: 'Page not found' }));
 }

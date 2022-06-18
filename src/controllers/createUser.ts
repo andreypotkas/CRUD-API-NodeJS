@@ -9,12 +9,14 @@ export async function createUser(
 ) {
   try {
     const user = await getRequestData(req);
-    const newUser = { id: uuid.v4(), ...user };
+    const newUser: IUser = { id: uuid.v4(), ...user };
     users.push(newUser);
     res.writeHead(201, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(newUser));
   } catch (err) {
-    res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Server not found' }));
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(
+      JSON.stringify({ message: "Body doesn't contain required fields" })
+    );
   }
 }

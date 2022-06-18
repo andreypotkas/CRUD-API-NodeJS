@@ -9,10 +9,22 @@ export const getRequestData = (req: IncomingMessage): Promise<IUser> => {
         body += chunk.toString();
       });
       req.on('end', () => {
-        resolve(JSON.parse(body));
+        if (
+          JSON.parse(body).hobbies &&
+          JSON.parse(body).username &&
+          JSON.parse(body).age
+        ) {
+          resolve(JSON.parse(body));
+        } else {
+          throw new Error('awdawdawd');
+        }
+      });
+      req.on('error', (error) => {
+        console.error(error);
       });
     } catch (error) {
-      reject(error);
+      console.log(error);
+      reject({ message: 'test' });
     }
   });
 };

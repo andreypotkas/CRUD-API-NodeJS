@@ -10,17 +10,24 @@ export async function updateUser(
   res: http.ServerResponse,
   id: string
 ) {
-  const newUser = await getRequestData(req);
-  users.splice(
-    users.findIndex((user) => user.id === id),
-    1,
-    newUser
-  );
-  try {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(newUser));
-  } catch (err) {
-    res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Server not found' }));
+  if (uuid.validate(id)) {
+    const user = await findUserById(id);
+
+    if (!user) {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: "User doesn't exist" }));
+    } else {
+      const newUser = await getRequestData(req);
+      users.splice(
+        users.findIndex((user) => user.id === id),
+        1,
+        newUser
+      );
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(newUser));
+    }
+  } else {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'UserId is invalid' }));
   }
 }

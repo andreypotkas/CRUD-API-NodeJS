@@ -7,19 +7,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import * as uuid from 'uuid';
 import users from '../db/users.js';
 import { getRequestData } from '../utils/getRequestData.js';
+import { findUserById } from './findUsers.js';
 export function updateUser(req, res, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const newUser = yield getRequestData(req);
-        users.splice(users.findIndex((user) => user.id === id), 1, newUser);
-        try {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(newUser));
+        if (uuid.validate(id)) {
+            const user = yield findUserById(id);
+            if (!user) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: "User doesn't exist" }));
+            }
+            else {
+                const newUser = yield getRequestData(req);
+                users.splice(users.findIndex((user) => user.id === id), 1, newUser);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(newUser));
+            }
         }
-        catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Server not found' }));
+        else {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'UserId is invalid' }));
         }
     });
 }

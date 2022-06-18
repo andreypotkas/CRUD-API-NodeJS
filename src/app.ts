@@ -12,30 +12,29 @@ import { updateUser } from './controllers/updateUser.js';
 
 const server: http.Server = http.createServer(
   (req: http.IncomingMessage, res: http.ServerResponse) => {
-    if (req.url === '/api/users' && req.method === 'GET') {
-      getAllUsers(req, res);
-    } else if (req.url === '/api/users' && req.method === 'POST') {
-      createUser(req, res);
-    } else if (
-      uuid.validate((<string>req.url).split('/')[3]) &&
-      req.method === 'GET'
-    ) {
-      const id = (<string>req.url).split('/')[3];
-      getUserById(req, res, id);
-    } else if (
-      uuid.validate((<string>req.url).split('/')[3]) &&
-      req.method === 'PUT'
-    ) {
-      const id = (<string>req.url).split('/')[3];
-      updateUser(req, res, id);
-    } else if (
-      uuid.validate((<string>req.url).split('/')[3]) &&
-      req.method === 'DELETE'
-    ) {
-      const id = (<string>req.url).split('/')[3];
-      deleteUser(req, res, id);
-    } else {
-      getNotFound(req, res);
+    try {
+      if (req.url === '/api/users' && req.method === 'GET') {
+        getAllUsers(res);
+      } else if (req.url === '/api/users' && req.method === 'POST') {
+        createUser(req, res);
+      } else if ((<string>req.url).split('/')[3] && req.method === 'GET') {
+        const id = (<string>req.url).split('/')[3];
+        getUserById(res, id);
+      } else if ((<string>req.url).split('/')[3] && req.method === 'PUT') {
+        const id = (<string>req.url).split('/')[3];
+        updateUser(req, res, id);
+      } else if (
+        uuid.validate((<string>req.url).split('/')[3]) &&
+        req.method === 'DELETE'
+      ) {
+        const id = (<string>req.url).split('/')[3];
+        deleteUser(req, res, id);
+      } else {
+        getNotFound(req, res);
+      }
+    } catch (err: any) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(err));
     }
   }
 );

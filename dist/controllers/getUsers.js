@@ -8,7 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { findAllUsers, findUserById } from './findUsers.js';
-export function getAllUsers(req, res) {
+import * as uuid from 'uuid';
+export function getAllUsers(res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const users = yield findAllUsers();
@@ -27,22 +28,22 @@ export function getAllUsers(req, res) {
         }
     });
 }
-export function getUserById(req, res, id) {
+export function getUserById(res, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
+        if (uuid.validate(id)) {
             const user = yield findUserById(id);
             if (!user) {
                 res.writeHead(404, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: 'User not found' }));
+                res.end(JSON.stringify({ message: "User doesn't exist" }));
             }
             else {
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify(user));
             }
         }
-        catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Server not found' }));
+        else {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'UserId is invalid' }));
         }
     });
 }

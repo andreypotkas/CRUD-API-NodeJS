@@ -1,22 +1,16 @@
 import { IUser } from '../models/models';
 const users: IUser[] = [
   {
-    id: 'dbe2e22a-eee7-4208-a2ac-afe7372b4c76',
+    id: '1c4538d4-22d7-47d6-b23f-d2c99fd3c96f',
     username: 'Alex',
     age: 27,
     hobbies: ['boxing', 'running'],
   },
   {
-    id: 'dbe2e22b-eee7-4208-a2ac-afx7372b4c76',
+    id: '5fe93ce3-41d4-43e5-96a1-a4215184b075',
     username: 'Max',
     age: 17,
     hobbies: ['swimming', 'reading'],
-  },
-  {
-    id: 'dbe2e22a-eee7-4208-a2ac-afe7372b4c76',
-    username: 'Nik',
-    age: 37,
-    hobbies: ['dancing', 'cooking'],
   },
 ];
 export default users;

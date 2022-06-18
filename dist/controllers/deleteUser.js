@@ -7,17 +7,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import * as uuid from 'uuid';
 import users from '../db/users.js';
+import { findUserById } from './findUsers.js';
 export function deleteUser(req, res, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            users.splice(users.findIndex((user) => user.id === id), 1);
-            res.writeHead(202, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: `User ${id} deleted successfully!` }));
+        if (uuid.validate(id)) {
+            const user = yield findUserById(id);
+            if (!user) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: "User doesn't exist" }));
+            }
+            else {
+                users.splice(users.findIndex((user) => user.id === id), 1);
+                res.writeHead(204, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: `User ${id} deleted successfully!` }));
+            }
         }
-        catch (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Server not found' }));
+        else {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'UserId is invalid' }));
         }
     });
 }
