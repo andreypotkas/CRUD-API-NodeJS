@@ -1,7 +1,11 @@
 import { IncomingMessage } from 'http';
 import { IUser } from '../models/models';
+import http from 'http';
 
-export const getRequestData = (req: IncomingMessage): Promise<IUser> => {
+export const getRequestData = (
+  req: IncomingMessage,
+  res: http.ServerResponse
+): Promise<IUser> => {
   return new Promise((resolve, reject) => {
     try {
       let body: string = '';
@@ -16,15 +20,21 @@ export const getRequestData = (req: IncomingMessage): Promise<IUser> => {
         ) {
           resolve(JSON.parse(body));
         } else {
-          throw new Error('awdawdawd');
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(
+            JSON.stringify({
+              message: "Request body doesn't contain required fields",
+            })
+          );
         }
       });
-      req.on('error', (error) => {
-        console.error(error);
-      });
     } catch (error) {
-      console.log(error);
-      reject({ message: 'test' });
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(
+        JSON.stringify({
+          message: 'Internal Server Error',
+        })
+      );
     }
   });
 };

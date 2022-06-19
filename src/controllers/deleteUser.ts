@@ -1,8 +1,6 @@
 import http, { IncomingMessage } from 'http';
 import * as uuid from 'uuid';
 import users from '../db/users.js';
-import { IUser } from '../models/models.js';
-import { getRequestData } from '../utils/getRequestData.js';
 import { findUserById } from './findUsers.js';
 export async function deleteUser(
   req: http.IncomingMessage,

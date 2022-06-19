@@ -1,4 +1,4 @@
-import http, { IncomingMessage } from 'http';
+import http from 'http';
 import * as uuid from 'uuid';
 import users from '../db/users.js';
 import { IUser } from '../models/models.js';
@@ -8,7 +8,7 @@ export async function createUser(
   res: http.ServerResponse
 ) {
   try {
-    const user = await getRequestData(req);
+    const user = await getRequestData(req, res);
     const newUser: IUser = { id: uuid.v4(), ...user };
     users.push(newUser);
     res.writeHead(201, { 'Content-Type': 'application/json' });

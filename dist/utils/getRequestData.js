@@ -1,27 +1,29 @@
-export const getRequestData = (req) => {
-    return new Promise((resolve, reject) => {
+export var getRequestData = function (req, res) {
+    return new Promise(function (resolve, reject) {
         try {
-            let body = '';
-            req.on('data', (chunk) => {
-                body += chunk.toString();
+            var body_1 = '';
+            req.on('data', function (chunk) {
+                body_1 += chunk.toString();
             });
-            req.on('end', () => {
-                if (JSON.parse(body).hobbies &&
-                    JSON.parse(body).username &&
-                    JSON.parse(body).age) {
-                    resolve(JSON.parse(body));
+            req.on('end', function () {
+                if (JSON.parse(body_1).hobbies &&
+                    JSON.parse(body_1).username &&
+                    JSON.parse(body_1).age) {
+                    resolve(JSON.parse(body_1));
                 }
                 else {
-                    throw new Error('awdawdawd');
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({
+                        message: "Request body doesn't contain required fields",
+                    }));
                 }
-            });
-            req.on('error', (error) => {
-                console.error(error);
             });
         }
         catch (error) {
-            console.log(error);
-            reject({ message: 'test' });
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                message: 'Internal Server Error',
+            }));
         }
     });
 };

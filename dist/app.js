@@ -5,7 +5,7 @@ import { createUser } from './controllers/createUser.js';
 import { deleteUser } from './controllers/deleteUser.js';
 import { getAllUsers, getNotFound, getUserById, } from './controllers/getUsers.js';
 import { updateUser } from './controllers/updateUser.js';
-const server = http.createServer((req, res) => {
+var server = http.createServer(function (req, res) {
     try {
         if (req.url === '/api/users' && req.method === 'GET') {
             getAllUsers(res);
@@ -14,16 +14,16 @@ const server = http.createServer((req, res) => {
             createUser(req, res);
         }
         else if (req.url.split('/')[3] && req.method === 'GET') {
-            const id = req.url.split('/')[3];
+            var id = req.url.split('/')[3];
             getUserById(res, id);
         }
         else if (req.url.split('/')[3] && req.method === 'PUT') {
-            const id = req.url.split('/')[3];
+            var id = req.url.split('/')[3];
             updateUser(req, res, id);
         }
         else if (uuid.validate(req.url.split('/')[3]) &&
             req.method === 'DELETE') {
-            const id = req.url.split('/')[3];
+            var id = req.url.split('/')[3];
             deleteUser(req, res, id);
         }
         else {
@@ -35,5 +35,6 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify(err));
     }
 });
-const PORT = process.env.PORT || '5000';
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+var PORT = process.env.PORT || '5000';
+server.listen(PORT, function () { return console.log("Server running on port ".concat(PORT)); });
+export default server;

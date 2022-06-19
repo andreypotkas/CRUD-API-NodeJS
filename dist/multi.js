@@ -1,14 +1,3 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -45,38 +34,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import * as uuid from 'uuid';
-import users from '../db/users.js';
-import { getRequestData } from '../utils/getRequestData.js';
-import { findUserById } from './findUsers.js';
-export function updateUser(req, res, id) {
-    return __awaiter(this, void 0, void 0, function () {
-        var user, newUser;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!uuid.validate(id)) return [3 /*break*/, 5];
-                    return [4 /*yield*/, findUserById(id)];
-                case 1:
-                    user = _a.sent();
-                    if (!!user) return [3 /*break*/, 2];
-                    res.writeHead(404, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ message: "User doesn't exist" }));
-                    return [3 /*break*/, 4];
-                case 2: return [4 /*yield*/, getRequestData(req, res)];
-                case 3:
-                    newUser = _a.sent();
-                    users.splice(users.findIndex(function (user) { return user.id === id; }), 1, newUser);
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify(__assign({ id: id }, newUser)));
-                    _a.label = 4;
-                case 4: return [3 /*break*/, 6];
-                case 5:
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ message: 'UserId is invalid' }));
-                    _a.label = 6;
-                case 6: return [2 /*return*/];
-            }
-        });
+import cluster from 'cluster';
+import { cpus } from 'os';
+import { pid } from 'process';
+void (function () { return __awaiter(void 0, void 0, void 0, function () {
+    var numOfCpus, i, id;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if (!cluster.isPrimary) return [3 /*break*/, 1];
+                numOfCpus = cpus().length;
+                console.log("Primary process started");
+                console.log("Starting ".concat(numOfCpus, " forks"));
+                for (i = 0; i < numOfCpus; i++)
+                    cluster.fork();
+                return [3 /*break*/, 3];
+            case 1:
+                id = (_a = cluster.worker) === null || _a === void 0 ? void 0 : _a.id;
+                return [4 /*yield*/, import('./app.js')];
+            case 2:
+                _b.sent();
+                console.log("Worker with id: ".concat(pid, " has been spawned"));
+                _b.label = 3;
+            case 3: return [2 /*return*/];
+        }
     });
-}
+}); })();
