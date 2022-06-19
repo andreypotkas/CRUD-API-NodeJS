@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import server from '../app.js';
 import request from 'supertest';
 describe('Testing CRUD API', function () {
-    describe('Scenario 1', function () {
+    describe('Scenario 1 with one user', function () {
         var user = {
             username: 'Max',
             age: 17,
@@ -136,5 +136,229 @@ describe('Testing CRUD API', function () {
                 }
             });
         }); });
+        server.close();
+    });
+    describe('Scenario 2 with several users', function () {
+        var users = [
+            {
+                username: 'Max',
+                age: 17,
+                hobbies: ['swimming', 'reading'],
+            },
+            {
+                username: 'Andrey',
+                age: 17,
+                hobbies: ['boxing', 'running'],
+            },
+            {
+                username: 'Nik',
+                age: 17,
+                hobbies: ['boxing', 'running'],
+            },
+        ];
+        var id1 = '';
+        var id2 = '';
+        var id3 = '';
+        var id4 = '';
+        it('Should create 3 new users', function () { return __awaiter(void 0, void 0, void 0, function () {
+            var res1, res2, res3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).post('/api/users').send(users[0])];
+                    case 1:
+                        res1 = _a.sent();
+                        return [4 /*yield*/, request(server).post('/api/users').send(users[1])];
+                    case 2:
+                        res2 = _a.sent();
+                        return [4 /*yield*/, request(server).post('/api/users').send(users[2])];
+                    case 3:
+                        res3 = _a.sent();
+                        expect(res1.statusCode).toBe(201);
+                        expect(res2.statusCode).toBe(201);
+                        expect(res3.statusCode).toBe(201);
+                        expect(res1.body.username).toBe('Max');
+                        expect(res2.body.username).toBe('Andrey');
+                        expect(res3.body.username).toBe('Nik');
+                        expect(res1.body.age).toBe(17);
+                        expect(res2.body.age).toBe(17);
+                        expect(res3.body.age).toBe(17);
+                        expect(res1.body.hobbies).toEqual(['swimming', 'reading']);
+                        expect(res2.body.hobbies).toEqual(['boxing', 'running']);
+                        expect(res3.body.hobbies).toEqual(['boxing', 'running']);
+                        id1 = res1.body.id;
+                        id2 = res2.body.id;
+                        id3 = res3.body.id;
+                        users[0] = res1.body;
+                        users[1] = res2.body;
+                        users[2] = res3.body;
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it('Should return all users', function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).get('/api/users')];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.body.length).toEqual(3);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it('Should create new user', function () { return __awaiter(void 0, void 0, void 0, function () {
+            var res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).post('/api/users').send(users[0])];
+                    case 1:
+                        res = _a.sent();
+                        expect(res.statusCode).toBe(201);
+                        expect(res.body.username).toBe('Max');
+                        expect(res.body.age).toBe(17);
+                        expect(res.body.hobbies).toEqual(['swimming', 'reading']);
+                        id4 = res.body.id;
+                        users[3] = res.body;
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it('Should return new count of users', function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).get('/api/users')];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.body.length).toEqual(4);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it('Should delete users', function () { return __awaiter(void 0, void 0, void 0, function () {
+            var res1, res2, res3, res4, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).delete("/api/users/".concat(id1))];
+                    case 1:
+                        res1 = _a.sent();
+                        return [4 /*yield*/, request(server).delete("/api/users/".concat(id2))];
+                    case 2:
+                        res2 = _a.sent();
+                        return [4 /*yield*/, request(server).delete("/api/users/".concat(id3))];
+                    case 3:
+                        res3 = _a.sent();
+                        return [4 /*yield*/, request(server).delete("/api/users/".concat(id4))];
+                    case 4:
+                        res4 = _a.sent();
+                        return [4 /*yield*/, request(server).get('/api/users')];
+                    case 5:
+                        response = _a.sent();
+                        expect(response.body).toEqual([]);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        server.close();
+    });
+    describe('Scenario 3 with error handlings', function () {
+        var invalidUser = {
+            username: 'Nik',
+            age: 17,
+        };
+        var user = {
+            username: 'Nik',
+            age: 17,
+            hobbies: ['boxing', 'running'],
+        };
+        it('Request on non existing endpoint should return message: Page not found', function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).get("/api/")];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.body.message).toEqual("Page not found");
+                        expect(response.statusCode).toEqual(404);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it("Request with non existing id should return message: User doesn't exist ", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).get("/api/users/1c4538d4-22d7-47d6-b23f-d2c99fd3c96f")];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.body.message).toEqual("User doesn't exist");
+                        expect(response.statusCode).toEqual(404);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it('Request with invalid uuid id should return message: UserId is invalid ', function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).get("/api/users/1c4538d4-22d7-47d6")];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.body.message).toEqual("UserId is invalid");
+                        expect(response.statusCode).toEqual(400);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it("POST request without required field should return message: Request body doesn't contain required fields ", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server)
+                            .post("/api/users")
+                            .send(invalidUser)];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.body.message).toEqual("Request body doesn't contain required fields");
+                        expect(response.statusCode).toEqual(400);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it("PUT request without required field should return message: Request body doesn't contain required fields ", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var res, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server).post('/api/users').send(user)];
+                    case 1:
+                        res = _a.sent();
+                        return [4 /*yield*/, request(server)
+                                .put("/api/users/".concat(res.body.id))
+                                .send(invalidUser)];
+                    case 2:
+                        response = _a.sent();
+                        expect(response.body.message).toEqual("Request body doesn't contain required fields");
+                        expect(response.statusCode).toEqual(400);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it('PUT request with invalid uuid id should return message: UserId is invalid ', function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, request(server)
+                            .put("/api/users/awdawdawdawdadw")
+                            .send(invalidUser)];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.body.message).toEqual("UserId is invalid");
+                        expect(response.statusCode).toEqual(400);
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        server.close();
     });
 });

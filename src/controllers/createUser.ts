@@ -16,7 +16,9 @@ export async function createUser(
   } catch (err) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(
-      JSON.stringify({ message: "Body doesn't contain required fields" })
+      JSON.stringify({
+        message: "Request body doesn't contain required fields",
+      })
     );
   }
 }

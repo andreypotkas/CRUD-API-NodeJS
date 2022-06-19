@@ -66,7 +66,9 @@ export function createUser(req, res) {
                 case 2:
                     err_1 = _a.sent();
                     res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ message: "Body doesn't contain required fields" }));
+                    res.end(JSON.stringify({
+                        message: "Request body doesn't contain required fields",
+                    }));
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
