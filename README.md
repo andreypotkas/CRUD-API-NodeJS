@@ -1,6 +1,6 @@
 # CRUD-API-NODEJS
 
-:alien::pencil: Simple CRUD API implemented using Node.js APIs without frameworks.
+:alien::pencil: Simple CRUD API implemented using Node.js APIs without frameworks with using typescript.
 
 ## Description
 
